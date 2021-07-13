@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import styled from 'styled-components'
+import { TodosContext } from '../contexts/Todos'
 
 const Todo = styled.div`
     padding: 8px;
@@ -19,7 +21,9 @@ const DeleteBtn = styled.button`
     border: none;
 `;
 
-function TodoList({ todos, completeTodo, deleteTodo }) {
+function TodoList() {
+    const { todos, completeTodo, deleteTodo } = useContext(TodosContext);
+
     return (
         <div>
             {todos.map(todo => (

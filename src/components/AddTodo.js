@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { useRef, useContext } from 'react'
 import styled from 'styled-components'
+import { TodosContext } from '../contexts/Todos'
 
 const Title = styled.h1`
     color: #87af38;
@@ -31,7 +32,8 @@ const Button = styled.button`
     border-bottom-right-radius: 3px;
 `;
 
-function AddTodo({ addTodo }) {
+function AddTodo() {
+    const { addTodo } = useContext(TodosContext);
     const todoInputRef = useRef();
 
     const handleSubmit = e => {
