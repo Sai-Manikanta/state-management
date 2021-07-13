@@ -1,6 +1,8 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { TodosContext } from '../contexts/Todos'
+import { loadTodos, deleteTodo, completeTodo } from '../contexts/reducers/todos'
+import axiosInstance from '../utils/axios';
 
 const Todo = styled.div`
     padding: 8px;
@@ -22,19 +24,41 @@ const DeleteBtn = styled.button`
 `;
 
 function TodoList() {
-    const { todos, completeTodo, deleteTodo } = useContext(TodosContext);
+    const { todos, dispatch } = useContext(TodosContext);
+
+    useEffect(() => {
+        axiosInstance.get('/todos')
+          .then(res => dispatch(loadTodos(res.data.data)))
+          .catch(err => console.error(err.message))
+    }, [dispatch])
+
+    const handleCompleteTodo = _id => {
+        axiosInstance.patch(`/todos/${_id}`, {
+            completed: true
+        })
+          .then(res => dispatch(completeTodo(_id)))
+          .catch(err => console.error(err.message))
+    }
+
+    const handleDeleteTodo = _id => {
+        axiosInstance.delete(`/todos/${_id}`, {
+            completed: true
+        })
+          .then(res => dispatch(deleteTodo(_id)))
+          .catch(err => console.error(err.message))
+    }
 
     return (
         <div>
             {todos.map(todo => (
                 <Todo key={todo._id}>
                     <TodoText 
-                        onClick={() => completeTodo(todo._id)}
+                        onClick={() => handleCompleteTodo(todo._id)}
                         completed={todo.completed}
                     >
                         {todo.name}
                     </TodoText>
-                    <DeleteBtn onClick={() => deleteTodo(todo._id)}>
+                    <DeleteBtn onClick={() => handleDeleteTodo(todo._id)}>
                         Delete
                     </DeleteBtn>
                 </Todo>
@@ -44,3 +68,4 @@ function TodoList() {
 }
 
 export default TodoList
+

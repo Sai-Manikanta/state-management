@@ -1,6 +1,8 @@
 import { useRef, useContext } from 'react'
 import styled from 'styled-components'
 import { TodosContext } from '../contexts/Todos'
+import { addTodo } from '../contexts/reducers/todos'
+import axiosInstance from '../utils/axios'
 
 const Title = styled.h1`
     color: #87af38;
@@ -33,13 +35,19 @@ const Button = styled.button`
 `;
 
 function AddTodo() {
-    const { addTodo } = useContext(TodosContext);
+    const { dispatch } = useContext(TodosContext);
     const todoInputRef = useRef();
 
     const handleSubmit = e => {
         e.preventDefault();
         const todo = todoInputRef.current.value;
-        addTodo(todo)
+
+        axiosInstance.post('/todos', {
+            name: todo
+        })
+          .then(res => dispatch(addTodo(res.data.data)))
+          .catch(err => console.log(err.message))
+
         todoInputRef.current.value = "";
     }
 
